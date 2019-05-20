@@ -1,4 +1,3 @@
-
 //% color=190 weight=100 icon="\uf1ec" block="Discovery Spot"
 //% groups=['LED matrix', 'Control flow', 'others']
 namespace discoveryspot {
@@ -44,7 +43,41 @@ namespace discoveryspot {
         if ((id & 0xF0) != 0x20) {
             return false;
         } else {
+            pins.i2cWriteNumber(proxAddr, 0x89, NumberFormat.UInt8BE)
+            pins.i2cWriteNumber(proxAddr, 0x08, NumberFormat.UInt8BE)
             return true
         }
+    }
+
+    function readU8(addr: number, command: number): number {
+        pins.i2cWriteNumber(addr, command, NumberFormat.UInt8BE)
+        return pins.i2cReadNumber(addr, NumberFormat.UInt8BE)
+    }
+
+    function writeU8(addr: number, command: number, value: number) {
+        pins.i2cWriteNumber(addr, command, NumberFormat.UInt8BE)
+        pins.i2cWriteNumber(addr, value, NumberFormat.UInt8BE)
+    }
+
+    function readU16(addr: number, command: number): number {
+        pins.i2cWriteNumber(addr, command, NumberFormat.UInt8BE)
+        return pins.i2cReadNumber(addr, NumberFormat.UInt16BE)
+    }
+
+
+    //% block
+    export function ReadProximity(): number {
+        pins.i2cWriteNumber(proxAddr, 0x8E, NumberFormat.UInt8BE)
+        let status = pins.i2cReadNumber(proxAddr, NumberFormat.UInt8BE)
+        status = status & ~0x80
+
+        pins.i2cWriteNumber(proxAddr, 0x8E, NumberFormat.UInt8BE)
+        pins.i2cWriteNumber(proxAddr, status, NumberFormat.UInt8BE)
+
+        pins.i2cWriteNumber(proxAddr, 0x80, NumberFormat.UInt8BE)
+        pins.i2cWriteNumber(proxAddr, 0x08, NumberFormat.UInt8BE)
+        basic.pause(100)
+        pins.i2cWriteNumber(proxAddr, 0x87, NumberFormat.Int8LE)
+        return pins.i2cReadNumber(proxAddr, NumberFormat.UInt16BE)
     }
 } 
