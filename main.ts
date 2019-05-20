@@ -1,4 +1,7 @@
+//% color=190 weight=100 icon="\uf1ec" block="Discovery Spot"
+//% groups=['LED matrix', 'Control flow', 'others']
 namespace discoveryspot {
+    //% block
     export function ReadTemperature(): number {
         let temp = 0
         pins.i2cWriteNumber(
@@ -15,6 +18,7 @@ namespace discoveryspot {
         return temp
     }
 
+    //% block
     export function ReadHumidity(): number {
         let humidity = 0
         pins.i2cWriteNumber(
